@@ -1,0 +1,97 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+
+class AuthController extends Controller
+{
+    /**
+     * Inscription d'un patient ou d'un médecin.
+     * L'inscription en tant qu'admin n'est jamais autorisée via cette route.
+     */
+    public function register(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email',
+            'telephone' => 'nullable|string|max:30',
+            'password' => 'required|string|min:6|confirmed',
+            'role' => 'required|in:patient,medecin',
+            'specialite' => 'required_if:role,medecin|nullable|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $user = User::create([
+            'nom' => $request->nom,
+            'prenom' => $request->prenom,
+            'email' => $request->email,
+            'telephone' => $request->telephone,
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
+            'specialite' => $request->specialite,
+        ]);
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Inscription réussie.',
+            'user' => $user,
+            'token' => $token,
+        ], 201);
+    }
+
+    public function login(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $user = User::where('email', $request->email)->first();
+
+        if (! $user || ! Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'message' => 'Email ou mot de passe incorrect.',
+            ], 401);
+        }
+
+        if (! $user->actif) {
+            return response()->json([
+                'message' => 'Votre compte a été désactivé. Contactez l\'administration.',
+            ], 403);
+        }
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Connexion réussie.',
+            'user' => $user,
+            'token' => $token,
+        ]);
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json(['message' => 'Déconnexion réussie.']);
+    }
+
+    public function me(Request $request)
+    {
+        return response()->json($request->user());
+    }
+}

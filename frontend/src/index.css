@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Manrope', sans-serif;
+  color: #1f3a35;
+}
+
+h1, h2, h3, .font-display {
+  font-family: 'Fraunces', serif;
+}
+
+.font-mono-tab {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Le carnet de rendez-vous : créneau "disponible" avec un point pulsé */
+.slot-dot-available {
+  position: relative;
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #2b5048;
+}
+.slot-dot-available::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 1px solid #2b5048;
+  opacity: 0.4;
+  animation: pulse-ring 2.2s ease-out infinite;
+}
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  80% { transform: scale(1.6); opacity: 0; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+/* Tampon "confirmé" sur le paiement réussi */
+.stamp-confirme {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 2px solid #2b5048;
+  border-radius: 4px;
+  padding: 2px 10px;
+  color: #2b5048;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transform: rotate(-2deg);
+}
+
+/* Scrollbar discrète pour le carnet de créneaux */
+.ledger-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.ledger-scroll::-webkit-scrollbar-thumb {
+  background: #d6e3df;
+  border-radius: 999px;
+}

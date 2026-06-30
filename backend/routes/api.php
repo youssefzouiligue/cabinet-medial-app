@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Admin\AppointmentController as AdminAppointmentController;
+use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Api\Admin\PaymentController as AdminPaymentController;
 use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\AppointmentController;
@@ -44,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // --- Espace Administrateur ---
     Route::middleware('role:admin')->prefix('admin')->group(function () {
+        Route::get('/dashboard', [AdminDashboardController::class, 'getStats']);
         Route::get('/utilisateurs', [AdminUserController::class, 'index']);
         Route::post('/utilisateurs', [AdminUserController::class, 'store']);
         Route::get('/utilisateurs/{user}', [AdminUserController::class, 'show']);

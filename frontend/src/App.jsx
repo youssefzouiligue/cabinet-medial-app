@@ -17,6 +17,7 @@ import ManageSchedule from './pages/doctor/ManageSchedule'
 import DoctorAppointments from './pages/doctor/DoctorAppointments'
 
 import AdminLayout from './pages/admin/AdminLayout'
+import AdminDashboard from './pages/admin/AdminDashboard'
 import ManageUsers from './pages/admin/ManageUsers'
 import AdminAppointments from './pages/admin/AdminAppointments'
 import AdminPayments from './pages/admin/AdminPayments'
@@ -75,7 +76,8 @@ export default function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<ManageUsers />} />
+          <Route index element={<AdminDashboard />} />
+          <Route path="utilisateurs" element={<ManageUsers />} />
           <Route path="rendez-vous" element={<AdminAppointments />} />
           <Route path="paiements" element={<AdminPayments />} />
         </Route>
